@@ -1,15 +1,14 @@
-FROM ubuntu:22.04
+FROM nikolaik/python-nodejs:python3.10-nodejs20
 
-RUN apt-get update && apt-get install -y curl python3 python3-pip ffmpeg
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs
+WORKDIR /app
+COPY . .
 
-RUN node -v && npm -v
-
-COPY . /app/
-WORKDIR /app/
-
-RUN pip3 install --no-cache-dir -U -r requirements.txt
+RUN pip3 install --no-cache-dir --upgrade pip \
+    && pip3 install --no-cache-dir --upgrade -r requirements.txt
 
 CMD bash start
